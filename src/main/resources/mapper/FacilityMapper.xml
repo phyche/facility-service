@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.facilityService.dao.FacilityDao">
+    <resultMap type="com.example.facilityService.entity.FacilityEntity" id="FacilityMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="snNo" column="snNo" jdbcType="VARCHAR"/>
+        <result property="fileName" column="fileName" jdbcType="VARCHAR"/>
+<!--        <result property="file" column="file" jdbcType="LONGBLOB"/>-->
+    </resultMap>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectById" resultMap="FacilityMap">
+        select
+        id, type, snNo, file
+        from tb_facility
+        where id = #{id}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="selectOne" resultMap="FacilityMap">
+        select
+        id, type, snNo, fileName, file
+        from tb_facility
+        <where>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="snNo != null and snNo != ''">
+                and snNo = #{snNo}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件分页查询-->
+    <select id="queryAllByLimit" resultMap="FacilityMap">
+        select
+        id, type, snNo, fileName, file
+        from tb_facility
+        <where>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="snNo != null and snNo != ''">
+                and snNo = #{snNo}
+            </if>
+        </where>
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        select
+        count(id)
+        from tb_facility
+        <where>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="snNo != null and snNo != ''">
+                and snNo = #{snNo}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addFacility" keyProperty="id" useGeneratedKeys="true" >
+        insert into tb_facility(type, snNo) values (#{type},#{snNo})
+    </insert>
+
+    <update id="updateFacility">
+        update tb_facility
+        <set>
+            <if test="fileName != null and fileName != ''">
+                fileName = #{fileName},
+            </if>
+            <if test="file != null">
+                file = #{file},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
